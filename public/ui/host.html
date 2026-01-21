@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Host Dashboard - CiWAi™ Kuis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --primary: #2dd4bf;
+            --primary-dark: #0d9488;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --dark: #0f172a;
+
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .host-container {
+            max-width: 900px;
+            margin: 20px auto;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .stat-card p {
+            margin: 10px 0 0 0;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .controls {
+            background: var(--dark);
+            padding: 30px;
+            border-radius: 24px;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: var(--dark);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 #14b8a6;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #0f766e;
+        }
+
+        .btn-next:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .player-list {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .status-waiting {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .status-done {
+            background: #dcfce7;
+            color: #10b981;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        h1,
+        h2 {
+            margin-top: 0;
+            color: #0f172a;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.secondary {
+            background: #64748b;
+        }
+
+        .quiz-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .code-display {
+            background: #f0fdfa;
+            border: 2px dashed var(--primary);
+            color: var(--primary-dark);
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            letter-spacing: 8px;
+        }
+
+        #players {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+        }
+
+        #players li {
+            background: #ccfbf1;
+            color: #134e4a;
+            padding: 8px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 500;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="host-container">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1>🎛️ Host</h1>
+                <div style="font-size: 0.9rem;">
+                    <span id="hostEmail" style="font-weight: bold;"></span>
+                    <button onclick="logout()" class="secondary"
+                        style="padding: 5px 10px; margin-left: 10px;">Keluar</button>
+                </div>
+            </div>
+
+            <button onclick="toggleForm()" style="width: 100%;">+ Buat Kuis Baru</button>
+
+            <div id="quizForm" style="display:none; margin-top:20px; border-top: 1px solid #eee; padding-top: 20px;">
+                <input id="quizTitle" placeholder="Tema Kuis (Contoh: Singkatan Kata)">
+                <div style="background: #f8fafc; padding: 15px; border-radius: 12px;">
+                    <input id="question" placeholder="Pertanyaan">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <input id="opt0" placeholder="Opsi A">
+                        <input id="opt1" placeholder="Opsi B">
+                        <input id="opt2" placeholder="Opsi C">
+                        <input id="opt3" placeholder="Opsi D">
+                    </div>
+                    <select id="correct">
+                        <option value="0">Jawaban Benar: A</option>
+                        <option value="1">Jawaban Benar: B</option>
+                        <option value="2">Jawaban Benar: C</option>
+                        <option value="3">Jawaban Benar: D</option>
+                    </select>
+                </div>
+                <p id="statusMsg" style="color: #0d9488; font-weight: 500;"></p>
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button onclick="saveQuiz()" style="flex: 2;">💾 Simpan Kuis</button>
+                    <button onclick="addQuestion()" class="secondary" id="addQuestionBtn" disabled>+ Soal</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Pilih Kuis:</h3>
+            <div id="quizList">Loading kuis...</div>
+        </div>
+
+        <div class="card" id="sessionCard" style="display: none;">
+            <h2 style="text-align: center; margin-bottom: 5px;">Kode Gabung</h2>
+            <div class="code-display" id="gameCode">-</div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="startBtn" onclick="startGame()" style="flex: 1;" disabled>MULAI GAME</button>
+                <button id="nextBtn" onclick="nextQuestion()" class="secondary" style="flex: 1;" disabled>SOAL
+                    BERIKUTNYA</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>👥 Peserta (<span id="playerCount">0</span>)</h2>
+            <ul id="players"></ul>
+        </div>
+
+        <div style="text-align: center; color: #94a3b8; font-size: 0.8rem;">
+            CiWAi™ Kuis — Smart, Lightweight, and Human-Friendly Tech
+        </div>
+    </div>
+
+    <div id="previewModal"
+        style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center; padding: 20px; box-sizing: border-box;">
+        <div class="card" id="previewContent" style="width:100%; max-width:500px; margin-bottom:0;">
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        fetch("/auth/me")
+            .then(res => res.json())
+            .then(data => {
+                if (!data.user) {
+                    window.location.href = "/host/login.html";
+                } else {
+                    document.getElementById("hostEmail").innerText = data.user.email;
+                }
+            });
+
+        const socket = io();
+
+        let currentGameCode = null;
+        let currentQuizId = null;
+        let questionCount = 0;
+
+        const quizListEl = document.getElementById("quizList");
+        const gameCodeEl = document.getElementById("gameCode");
+        const startBtn = document.getElementById("startBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const playersEl = document.getElementById("players");
+
+        function toggleForm() {
+            const form = document.getElementById("quizForm");
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        }
+
+        async function saveQuiz() {
+            const title = quizTitle.value;
+
+            const res = await fetch("/quiz", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title }),
+            });
+
+            const quiz = await res.json();
+            currentQuizId = quiz.data.id;
+
+            questionCount = 0; // reset hitungan soal
+
+            document.getElementById("statusMsg").innerText =
+                "✅ Kuis dibuat. Sekarang tambahkan soal.";
+
+            document.getElementById("addQuestionBtn").disabled = false;
+        }
+
+        async function addQuestion() {
+            if (!currentQuizId) {
+
+                await fetch(`/quiz/${currentQuizId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title })
+                });
+
+                document.getElementById("statusMsg").innerText =
+                    "💾 Judul kuis diperbarui";
+
+                alert("Silahkan Buat Kuis!");
+                return;
+            }
+
+            const questionText = question.value;
+            const options = [opt0.value, opt1.value, opt2.value, opt3.value];
+            const correctIndex = parseInt(correct.value);
+
+            await fetch(`/quiz/${currentQuizId}/question`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    question: questionText,
+                    options,
+                    correctIndex
+                }),
+            });
+
+            questionCount++;
+            document.getElementById("statusMsg").innerText =
+                `➕ Soal ditambahkan (${questionCount} soal)`;
+
+            question.value = "";
+            opt0.value = "";
+            opt1.value = "";
+            opt2.value = "";
+            opt3.value = "";
+
+            await loadQuizzes();
+            return;
+        }
+
+        let allQuizzes = [];
+
+        async function loadQuizzes() {
+            const res = await fetch("/quiz/mine");
+            const data = await res.json();
+
+            allQuizzes = data;
+            quizListEl.innerHTML = "";
+
+            data.forEach(q => {
+                const div = document.createElement("div");
+                div.className = "quiz-item";
+
+                div.innerHTML = `
+      <div>
+        <strong>${q.title}</strong><br>
+        <small style="color: #64748b;">${q.questions.length} soal</small>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="secondary" onclick="previewQuiz(${q.id})" style="padding: 5px 10px; font-size: 0.8rem;">👁️ Lihat</button>
+        <button class="secondary" onclick="editQuiz(${q.id})">✏️</button>
+        <button onclick="createSession(${q.id})" style="padding: 5px 10px; font-size: 0.8rem;">Pilih</button>
+        <button class="secondary" onclick="deleteQuiz(${q.id})">🗑️</button>
+        </div>
+    `;
+                quizListEl.appendChild(div);
+            });
+        }
+
+        function previewQuiz(quizId) {
+            const quiz = allQuizzes.find(q => q.id === quizId);
+            if (!quiz) return;
+
+            let soalHtml = `<div style="text-align:left;">
+                <h3 style="margin-top:0">${quiz.title}</h3>
+                <div style="max-height: 350px; overflow-y: auto; padding-right: 10px;">`;
+
+            quiz.questions.forEach((q, i) => {
+                soalHtml += `
+                    <div style="margin-bottom: 12px; padding: 10px; background: #f1f5f9; border-radius: 8px; font-size: 0.85rem;">
+                        <strong>${i + 1}. ${q.question}</strong>
+                        <div style="margin-top: 5px; color: #475569;">
+                            ${q.options.map((opt, idx) => `
+                                <div style="${idx == q.correctIndex ? 'color: #0d9488; font-weight: bold;' : ''}">
+                                    ${String.fromCharCode(65 + idx)}. ${opt} ${idx == q.correctIndex ? '✓' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            soalHtml += `</div></div>
+                <button onclick="closePreview()" style="width:100%; margin-top:15px; background: #64748b;">Tutup</button>`;
+
+            document.getElementById("previewContent").innerHTML = soalHtml;
+            document.getElementById("previewModal").style.display = "flex";
+        }
+
+        function closePreview() {
+            document.getElementById("previewModal").style.display = "none";
+        }
+
+        function createSession(quizId) {
+            socket.emit("host:start-session", { quizId });
+        }
+
+        socket.on("session:created", (data) => {
+            document.getElementById("sessionCard").style.display = "block";
+            currentGameCode = data.gameCode;
+            gameCodeEl.innerText = data.gameCode;
+
+            startBtn.disabled = false;
+            nextBtn.disabled = false;
+
+            alert(`Session dibuat untuk "${data.quizTitle}"`);
+        });
+
+        async function deleteQuiz(id) {
+            if (!confirm("Yakin hapus kuis ini?")) return;
+
+            await fetch(`/quiz/${id}`, {
+                method: "DELETE"
+            });
+
+            await loadQuizzes();
+        }
+
+        function startGame() {
+            socket.emit("host:start-game", { gameCode: currentGameCode });
+        }
+
+        function nextQuestion() {
+            socket.emit("host:next-question", { gameCode: currentGameCode });
+        }
+
+        socket.on("lobby:update", (data) => {
+            document.getElementById("playerCount").innerText = data.count;
+            playersEl.innerHTML = "";
+            data.players.forEach(p => {
+                const li = document.createElement("li");
+                li.innerText = p;
+                playersEl.appendChild(li);
+            });
+        });
+
+        function editQuiz(id) {
+            const quiz = allQuizzes.find(q => q.id === id);
+            if (!quiz) return;
+
+            currentQuizId = id;
+            questionCount = quiz.questions.length;
+
+            quizTitle.value = quiz.title;
+
+            if (quiz.questions.length > 0) {
+                const q = quiz.questions[0];
+                question.value = q.question;
+                opt0.value = q.options[0];
+                opt1.value = q.options[1];
+                opt2.value = q.options[2];
+                opt3.value = q.options[3];
+                correct.value = q.correctIndex;
+            }
+
+            document.getElementById("quizForm").style.display = "block";
+            document.getElementById("addQuestionBtn").disabled = false;
+
+            document.getElementById("statusMsg").innerText =
+                `✏️ Mode edit (${questionCount} soal sudah ada)`;
+        }
+
+        function logout() {
+            fetch("/auth/logout", { method: "POST" })
+                .then(() => location.href = "/host/login.html");
+        }
+
+        loadQuizzes();
+    </script>
+
+</body>
+
+</html>

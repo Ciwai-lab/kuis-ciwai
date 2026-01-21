@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabung Kuis - CiWAi™</title>
+    <style>
+        :root {
+            --primary: #2dd4bf;
+            /* Toska CiWAi™ */
+            --primary-dark: #0d9488;
+            --bg: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #1e293b;
+        }
+
+        .join-card {
+            background: white;
+            padding: 40px;
+            border-radius: 28px;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 2px solid white;
+        }
+
+        .logo-area {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            box-sizing: border-box;
+            font-size: 1.1rem;
+            text-align: center;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        input#gameCode {
+            letter-spacing: 4px;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #f0fdfa;
+            box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.15);
+        }
+
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+            box-shadow: 0 4px 0px #14b8a6;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0px #0f766e;
+        }
+
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 0px 0px #0f766e;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="join-card">
+        <div class="logo-area">🎮</div>
+        <h1>CiWAi™ Kuis</h1>
+        <p>Masukkan kode untuk mulai seru-seruan!</p>
+
+        <div class="input-group">
+            <input id="gameCode" type="text" placeholder="CODE KUIS" maxlength="6" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <input id="nickname" type="text" placeholder="Nama Panggilan" maxlength="15" autocomplete="off">
+        </div>
+
+        <button onclick="join()">GABUNG SEKARANG</button>
+
+        <div class="footer">
+            Smart & Lightweight Tech for Students
+        </div>
+    </div>
+
+    <script>
+        function join() {
+            const gameCode = document.getElementById("gameCode").value.trim();
+            const nickname = document.getElementById("nickname").value.trim();
+
+            if (!gameCode || !nickname) {
+                alert("Eitss, isi dulu kode sama nama ente bro!");
+                return;
+            }
+
+            window.location.href = `/ui/play.html?gameCode=${gameCode}&nickname=${nickname}`;
+        }
+
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') join();
+        });
+    </script>
+
+</body>
+
+</html>
