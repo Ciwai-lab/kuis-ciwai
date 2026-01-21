@@ -20,18 +20,21 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            color: #1e293b;
         }
 
         .auth-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             background: white;
             padding: 40px;
-            border-radius: 24px;
+            border-radius: 28px;
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-            width: 100%;
-            max-width: 380px;
+            width: 90%;
+            max-width: 400px;
             text-align: center;
-            border: 1px solid rgba(45, 212, 191, 0.2);
-            animation: slideUp 0.4s ease-out;
+            border: 2px solid white;
         }
 
         @keyframes slideUp {
@@ -53,9 +56,10 @@
         }
 
         h1 {
-            font-size: 1.5rem;
-            color: #0f172a;
-            margin-bottom: 8px;
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.5px;
         }
 
         p {
@@ -129,6 +133,19 @@
             margin-top: 30px;
             font-size: 0.8rem;
             color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .logo-wrapper {
+            margin-bottom: 10px;
+        }
+
+        .logo-img {
+            height: 140px;
+            max-width: 260px;
+            object-fit: contain;
+            margin-bottom: -28px;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.08));
         }
     </style>
 </head>
@@ -136,18 +153,20 @@
 <body>
 
     <div class="auth-card">
-        <span class="logo">🌱</span>
-        <h1>Join CiWAi™ Kuis</h1>
-        <p>Buat akun Host anda di sini</p>
+        <div class="logo-wrapper">
+            <img src="/ui/assets/CiwAI-Kuis.png" alt="CiwAI Logo" class="logo-img">
+        </div>
+        <h1>CiwAi™ Kuis</h1>
+        <p>Lengkapi data berikut untuk membuat akun Host Anda.</p>
 
         <form id="registerForm">
             <div class="form-group">
-                <label>Email Sekolah / Pribadi</label>
+                <label>Alamat Email</label>
                 <input type="email" id="email" placeholder="contoh@ciwai.dev" required>
             </div>
             <div class="form-group">
                 <label>Password Baru</label>
-                <input type="password" id="password" placeholder="Min. 8 karakter" required>
+                <input type="password" id="password" placeholder="••••••••" required>
             </div>
             <button type="submit">Daftar Akun</button>
         </form>
@@ -157,7 +176,7 @@
         </div>
 
         <div class="footer">
-            CiWAi™ — Human-Friendly Tech
+            &copy; 2026 Ciwai Smart Digital. All Rights Reserved.
         </div>
     </div>
 
