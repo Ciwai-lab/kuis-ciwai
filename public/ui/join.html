@@ -8,7 +8,6 @@
     <style>
         :root {
             --primary: #2dd4bf;
-            /* Toska CiWAi™ */
             --primary-dark: #0d9488;
             --bg: #f1f5f9;
         }
@@ -25,6 +24,9 @@
         }
 
         .join-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             background: white;
             padding: 40px;
             border-radius: 28px;
@@ -115,19 +117,36 @@
             color: #94a3b8;
             font-weight: 500;
         }
+
+        .logo-wrapper {
+            margin-bottom: 10px;
+        }
+
+        .logo-img {
+            height: 240px;
+            max-width: 280px;
+            object-fit: contain;
+            margin-bottom: -40px;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.08));
+        }
     </style>
 </head>
 
 <body>
 
     <div class="join-card">
-        <div class="logo-area">🎮</div>
-        <h1>CiWAi™ Kuis</h1>
+
+        <div class="logo-wrapper">
+            <img src="/ui/assets/CiwAI-Kuis.png" alt="CiwAI Logo" class="logo-img">
+        </div>
+
+        <h1>CiwAi™ Kuis</h1>
         <p>Masukkan kode untuk mulai seru-seruan!</p>
 
         <div class="input-group">
             <input id="gameCode" type="text" placeholder="CODE KUIS" maxlength="6" autocomplete="off">
         </div>
+
         <div class="input-group">
             <input id="nickname" type="text" placeholder="Nama Panggilan" maxlength="15" autocomplete="off">
         </div>
@@ -135,9 +154,11 @@
         <button onclick="join()">GABUNG SEKARANG</button>
 
         <div class="footer">
-            Smart & Lightweight Tech for Students
+            &copy; 2026 Ciwai Smart Digital. All Rights Reserved.
         </div>
+
     </div>
+
 
     <script>
         function join() {
