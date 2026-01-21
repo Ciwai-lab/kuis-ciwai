@@ -2,7 +2,7 @@ const http = require("http");
 const app = require("./src/app");
 const { Server } = require("socket.io");
 const SessionService = require("./src/services/session.service");
-const quizzes = require("./src/controllers/quiz.controller"); // Pindah ke atas biar rapi
+const quizzes = require("./src/controllers/quiz.controller");
 
 const server = http.createServer(app);
 
@@ -16,8 +16,6 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log("🟢 User connected:", socket.id);
-
-  // --- SEMUA EVENT SOCKET HARUS DI DALAM SINI ---
 
   // 1. Siswa Join ke Lobby
   socket.on("join-session", ({ gameCode, nickname }) => {
@@ -59,7 +57,7 @@ io.on("connection", (socket) => {
   // 4. Host Mulai Game (Soal Pertama Muncul)
   socket.on("host:start-game", ({ gameCode }) => {
     console.log("🎮 Game started:", gameCode);
-    io.to(gameCode).emit("game:started"); // Biar HP siswa pindah dari Lobby ke Game
+    io.to(gameCode).emit("game:started");
 
     SessionService.startGame(
       gameCode,
@@ -112,9 +110,9 @@ io.on("connection", (socket) => {
     console.log("🔴 User disconnected:", socket.id);
   });
 
-}); // <--- Tutup io.on ("connection")
+});
 
-const PORT = 3000;
+const PORT = 5000;
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
