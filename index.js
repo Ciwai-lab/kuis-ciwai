@@ -18,7 +18,12 @@ io.on("connection", (socket) => {
   console.log("🟢 User connected:", socket.id);
 
   // 1. Siswa Join ke Lobby
-  socket.on("join-session", ({ gameCode, nickname }) => {
+  socket.on("join-session", (payload = {}) => {
+    const { gameCode, nickname } = payload;
+    if (!gameCode || !nickname) {
+      socket.emit("join:error", { message: "Invalid payload" });
+      return;
+    }
     const result = SessionService.addPlayer(gameCode, socket.id, nickname);
     if (!result) {
       socket.emit("join:error", { message: "Session not found" });
@@ -38,7 +43,12 @@ io.on("connection", (socket) => {
   });
 
   // 2. Player Submit Jawaban & Update Leaderboard
-  socket.on("player:submit-answer", ({ gameCode, answerIndex }) => {
+  socket.on("player:submit-answer", (payload = {}) => {
+    const { gameCode, answerIndex } = payload;
+    if (!gameCode || answerIndex === undefined) {
+      socket.emit("answer:error", { message: "Invalid payload" });
+      return;
+    }
     SessionService.submitAnswer(gameCode, socket.id, answerIndex);
     const session = SessionService.getSession(gameCode);
     if (session) {
@@ -48,7 +58,12 @@ io.on("connection", (socket) => {
   });
 
   // 3. Host Bikin Sesi Baru
-  socket.on("host:start-session", ({ quizId }) => {
+  socket.on("host:start-session", (payload = {}) => {
+    const { quizId } = payload;
+    if (!quizId) {
+      socket.emit("session:error", { message: "Invalid payload" });
+      return;
+    }
     const quiz = quizzes.getQuizByIdDirect(quizId);
     if (!quiz) return;
 
@@ -58,7 +73,12 @@ io.on("connection", (socket) => {
   });
 
   // 4. Host Mulai Game (Soal Pertama Muncul)
-  socket.on("host:start-game", ({ gameCode }) => {
+  socket.on("host:start-game", (payload = {}) => {
+    const { gameCode } = payload;
+    if (!gameCode) {
+      socket.emit("game:error", { message: "Invalid payload" });
+      return;
+    }
     console.log("🎮 Game started:", gameCode);
     io.to(gameCode).emit("game:started");
 
@@ -80,7 +100,12 @@ io.on("connection", (socket) => {
   });
 
   // 5. Host Klik "Next Question"
-  socket.on("host:next-question", ({ gameCode }) => {
+  socket.on("host:next-question", (payload = {}) => {
+    const { gameCode } = payload;
+    if (!gameCode) {
+      socket.emit("game:error", { message: "Invalid payload" });
+      return;
+    }
     const result = SessionService.advanceGame(
       gameCode,
       (data) => {

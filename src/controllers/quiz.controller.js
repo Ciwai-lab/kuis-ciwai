@@ -35,10 +35,18 @@ function getMyQuizzes(req, res) {
         const questions = db
             .prepare("SELECT * FROM questions WHERE quizId = ?")
             .all(q.id)
-            .map(x => ({
-                ...x,
-                options: JSON.parse(x.options),
-            }));
+            .map(x => {
+                let options = [];
+                try {
+                    options = JSON.parse(x.options);
+                } catch {
+                    options = [];
+                }
+                return {
+                    ...x,
+                    options,
+                };
+            });
 
         return { ...q, questions };
     });
@@ -98,10 +106,18 @@ function getAllQuizzes(req, res) {
         const questions = db
             .prepare("SELECT * FROM questions WHERE quizId = ?")
             .all(q.id)
-            .map(x => ({
-                ...x,
-                options: JSON.parse(x.options),
-            }));
+            .map(x => {
+                let options = [];
+                try {
+                    options = JSON.parse(x.options);
+                } catch {
+                    options = [];
+                }
+                return {
+                    ...x,
+                    options,
+                };
+            });
 
         return { ...q, questions };
     });
@@ -124,10 +140,18 @@ function getQuizById(req, res) {
     const questions = db
         .prepare("SELECT * FROM questions WHERE quizId = ?")
         .all(quizId)
-        .map(q => ({
-            ...q,
-            options: JSON.parse(q.options),
-        }));
+        .map(q => {
+            let options = [];
+            try {
+                options = JSON.parse(q.options);
+            } catch {
+                options = [];
+            }
+            return {
+                ...q,
+                options,
+            };
+        });
 
     res.json({
         success: true,
@@ -143,10 +167,18 @@ function getQuizByIdDirect(id) {
     const questions = db
         .prepare("SELECT * FROM questions WHERE quizId = ?")
         .all(id)
-        .map(q => ({
-            ...q,
-            options: JSON.parse(q.options),
-        }));
+        .map(q => {
+            let options = [];
+            try {
+                options = JSON.parse(q.options);
+            } catch {
+                options = [];
+            }
+            return {
+                ...q,
+                options,
+            };
+        });
 
     return { ...quiz, questions };
 }
