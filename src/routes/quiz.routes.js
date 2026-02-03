@@ -17,7 +17,7 @@ const {
 } = require("../controllers/quiz.controller");
 
 router.post("/", requireAuth, createQuiz);
-router.post("/:id/question", addQuestion);
+router.post("/:id/question", requireAuth, addQuestion);
 
 router.get("/", getAllQuizzes);
 router.get("/mine", requireAuth, getMyQuizzes);

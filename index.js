@@ -20,7 +20,10 @@ io.on("connection", (socket) => {
   // 1. Siswa Join ke Lobby
   socket.on("join-session", ({ gameCode, nickname }) => {
     const result = SessionService.addPlayer(gameCode, socket.id, nickname);
-    if (!result) return;
+    if (!result) {
+      socket.emit("join:error", { message: "Session not found" });
+      return;
+    }
     if (result.error) {
       socket.emit("join:error", { message: result.error });
       return;
@@ -78,20 +81,22 @@ io.on("connection", (socket) => {
 
   // 5. Host Klik "Next Question"
   socket.on("host:next-question", ({ gameCode }) => {
-    const result = SessionService.nextQuestion(gameCode);
+    const result = SessionService.advanceGame(
+      gameCode,
+      (data) => {
+        io.to(gameCode).emit("question", {
+          question: data.question,
+          index: data.index,
+          total: data.total
+        });
+      },
+      () => {
+        io.to(gameCode).emit("game:finished", {
+          leaderboard: SessionService.getLeaderboard(gameCode)
+        });
+      }
+    );
     if (!result) return;
-
-    if (result.finished) {
-      io.to(gameCode).emit("game:finished", {
-        leaderboard: SessionService.getLeaderboard(gameCode)
-      });
-    } else {
-      io.to(gameCode).emit("question", {
-        question: result.question,
-        index: result.index,
-        total: result.total
-      });
-    }
   });
 
   // 6. Handle Disconnect (Biar list pemain di lobby update otomatis)

@@ -211,8 +211,8 @@
         document.getElementById("myNickname").innerText = nickname;
 
         const socket = io();
+        const feedbackEl = document.getElementById("feedback");
         let answered = false;
-        let timerInterval = null;
 
         socket.on("connect", () => {
             document.getElementById("status-bar").innerText = `🎮 ${nickname} @ ${gameCode}`;
@@ -243,7 +243,7 @@
             document.getElementById("feedback").innerText = "";
 
             const questionObj = data.question;
-            document.getElementById("questionText").innerText = questionObj.text;
+            document.getElementById("questionText").innerText = questionObj.question;
 
             const optionsEl = document.getElementById("options");
             optionsEl.innerHTML = "";
@@ -270,7 +270,6 @@
 
                     socket.emit("player:submit-answer", { gameCode, answerIndex: index });
 
-                    const feedbackEl = document.getElementById("feedback");
                     feedbackEl.innerText = "Jawaban Terkirim! 🚀";
                     feedbackEl.style.color = "var(--primary-dark)";
                 };
@@ -298,10 +297,6 @@
                 lbEl.appendChild(li);
             });
         });
-
-        function disableOptions() {
-            document.querySelectorAll(".opt-btn").forEach(b => b.disabled = true);
-        }
 
         socket.on("game:finished", (data) => {
             const gameArea = document.getElementById("game");
@@ -354,6 +349,11 @@
         `;
                 lbEl.appendChild(li);
             });
+        });
+
+        socket.on("join:error", (err) => {
+            document.getElementById("status-bar").innerText =
+                err?.message || "Gagal masuk sesi.";
         });
     </script>
 </body>

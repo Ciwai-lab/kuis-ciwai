@@ -49,19 +49,9 @@ function getMyQuizzes(req, res) {
 // ADD question
 function addQuestion(req, res) {
     const quizId = parseInt(req.params.id);
-    const id = req.params.id;
     const { question, options, correctIndex } = req.body;
 
-    db.prepare(`
-    UPDATE questions
-    SET question = ?, options = ?, correctIndex = ?
-    WHERE id = ?
-  `).run(question, JSON.stringify(options), correctIndex, id);
-
-    res.json({ success: true });
-
-
-    if (!question || !options || correctIndex === undefined) {
+    if (!question || !Array.isArray(options) || options.length < 2 || correctIndex === undefined) {
         return res.status(400).json({ success: false, message: "Invalid format" });
     }
 
@@ -71,6 +61,9 @@ function addQuestion(req, res) {
 
     if (!quiz) {
         return res.status(404).json({ success: false, message: "Quiz not found" });
+    }
+    if (quiz.hostId !== req.user.id) {
+        return res.status(403).json({ success: false, message: "Forbidden" });
     }
 
     const result = db
@@ -214,4 +207,3 @@ module.exports = {
     updateQuizTitle,
     updateQuestion
 };
-

@@ -53,25 +53,34 @@ class SessionService {
         if (!session) return;
 
         session.started = true;
+        this.advanceGame(gameCode, onQuestion, onFinish);
+    }
 
-        const next = () => {
-            const result = this.nextQuestion(gameCode);
+    advanceGame(gameCode, onQuestion, onFinish) {
+        const session = this.sessions[gameCode];
+        if (!session) return null;
 
-            if (result.finished) {
-                onFinish(session);
-                return;
-            }
+        if (session.timer) {
+            clearTimeout(session.timer);
+            session.timer = null;
+        }
 
-            onQuestion(result);
+        const result = this.nextQuestion(gameCode);
 
-            const duration = result.question.duration || 10;
+        if (result.finished) {
+            session.finished = true;
+            onFinish(session);
+            return result;
+        }
 
-            session.timer = setTimeout(() => {
-                next();
-            }, duration * 1000 + 2000); // +2 detik jeda antar soal
-        };
+        onQuestion(result);
 
-        next();
+        const duration = result.question.duration || 10;
+        session.timer = setTimeout(() => {
+            this.advanceGame(gameCode, onQuestion, onFinish);
+        }, duration * 1000 + 2000); // +2 detik jeda antar soal
+
+        return result;
     }
 
     nextQuestion(gameCode) {

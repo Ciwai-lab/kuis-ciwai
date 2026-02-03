@@ -352,16 +352,6 @@
 
         async function addQuestion() {
             if (!currentQuizId) {
-
-                await fetch(`/quiz/${currentQuizId}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ title })
-                });
-
-                document.getElementById("statusMsg").innerText =
-                    "💾 Judul kuis diperbarui";
-
                 alert("Silahkan Buat Kuis!");
                 return;
             }
